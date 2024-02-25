@@ -11,7 +11,9 @@ async function getSongs(q) {
     const url = "https://api.musixmatch.com/ws/1.1/";
     await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${q}&page_size=10`, {
         headers: {
-          'Access-Control-Allow-Origin': 'https://musicfromlyrics.netlify.app/'
+          'Access-Control-Allow-Origin': 'https://musicfromlyrics.netlify.app/',
+          'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type'
         }
       })
         .then(res => console.log(res))

@@ -10,10 +10,12 @@ searchButton.addEventListener("click", e =>{
 async function getSongs(q) {
     const url = "https://api.musixmatch.com/ws/1.1/";
     await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${q}&page_size=10`, {
-        mode: 'no-cors'
+        headers: {
+          'Access-Control-Allow-Origin': 'https://musicfromlyrics.netlify.app/'
+        }
       })
-        .then(res => res.json())
-        .then(json => data=json.message.body.track_list);
+        .then(res => console.log(res))
+        // .then(json => data=json.message.body.track_list);
 
     
     for (let i = 0; i < data.length; i++) {

@@ -1,4 +1,4 @@
-const APIKEY = '62fec49cc647e9df2fd733a6829c492c';
+// const APIKEY = '62fec49cc647e9df2fd733a6829c492c';
 
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
@@ -10,15 +10,8 @@ searchButton.addEventListener("click", e =>{
 async function getSongs(q) {
     const url = "https://api.musixmatch.com/ws/1.1/";
     await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${q}&page_size=10`, {
-        method: 'GET',
-        headers: {
-        'Content-Type': 'application/json',
-        'no-cors': 'true',
-        'Access-Control-Allow-Origin': 'http://192.168.1.4:5501',
-        'Access-Control-Allow-Credentials': 'true'
-        // Add any additional headers if needed
-        },
-    })
+        mode: 'no-cors'
+      })
         .then(res => res.json())
         .then(json => data=json.message.body.track_list);
 

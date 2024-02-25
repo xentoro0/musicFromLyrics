@@ -1,4 +1,4 @@
-// const APIKEY = '62fec49cc647e9df2fd733a6829c492c';
+const APIKEY = '62fec49cc647e9df2fd733a6829c492c';
 
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");

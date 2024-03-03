@@ -13,7 +13,7 @@ async function getSongs(q) {
         credentials: 'include',
         method: 'POST',
         headers: {
-          'Access-Control-Allow-Origin': 'http://192.168.1.4:5500/',
+          'Access-Control-Allow-Origin': 'https://xentoro0.github.io/musicFromLyrics/',
           'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
           'Access-Control-Allow-Headers': 'Content-Type'
         }

@@ -1,21 +1,46 @@
 const express = require('express');
 const serverless = require('serverless-http');
 const app = express();
+const cors = require('cors');
 const router = express.Router();
+require('dotenv').config();
+const APIKEY = process.env.APIKEY;
 
 
-router.post('/', (req, res) => {
-    const bufferData = req.body.data;
-    const stringValue = bufferData.toString('utf-8');
-    console.log(stringValue);
-    // Save the data of user that was sent by the client
-  
-    // Send a response to client that will show that the request was successfull.
-    res.send({
-      message: stringValue,
-    });
+const corsOptions = {
+    origin: ['http://192.168.1.3:5500'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    optionsSuccessStatus: 204,
+  };
+app.use(cors(corsOptions));
+
+
+router.post('/search', async (req, res) => {
+    var msg = '';
+
+    const bufferData = req.body;
+    const stringValue = JSON.parse(bufferData.toString('utf-8')).name;
+    
+    const url = "https://api.musixmatch.com/ws/1.1/";
+        await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${stringValue}&page_size=10`)
+            .then(res => res.json())
+            .then(json => msg=json.message.body);
+            
+        res.json({ msg:msg, api:APIKEY, str:stringValue });
 })
 
+router.post('/getLyrics', async (req, res) => {
+    var lyrics;
+    const bufferData = req.body;
+    const stringValue = JSON.parse(bufferData.toString('utf-8')).name;
+
+    const url = "https://api.musixmatch.com/ws/1.1/";
+    await fetch(url + `track.lyrics.get?apikey=${APIKEY}&track_id=${stringValue}`)
+        .then(res => res.json())
+        .then(json => lyrics = json.message.body.lyrics.lyrics_body);
+        
+        res.json({ lyrics });
+})
 // var data;
 // var tracks = [];
 

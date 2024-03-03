@@ -1,13 +1,14 @@
 *{
     margin:0;
     padding: 0;
-    font-size: 220px;
+    font-size: 20px;
 }
 body{
     height: 100vh;
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column; */
 }
 .form-outline{
     width: 100%;
@@ -41,3 +42,22 @@ body{
 .container *:last-child{
     border-radius:0 4px 4px 0 !important;
 }
+.cards .card{
+    width: 40rem;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 20px;
+    max-height: 50rem;
+    
+}
+.cards{
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+.cards .card p {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 10; /* Adjust the number of lines to show */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;}

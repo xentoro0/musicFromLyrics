@@ -1,4 +1,4 @@
-const APIKEY = '62fec49cc647e9df2fd733a6829c492c';
+const APIKEY = '';
 
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
@@ -9,15 +9,7 @@ searchButton.addEventListener("click", e =>{
 
 async function getSongs(q) {
     const url = "https://api.musixmatch.com/ws/1.1/";
-    await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${q}&page_size=10`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Access-Control-Allow-Origin': 'https://xentoro0.github.io/musicFromLyrics/',
-          'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-          'Access-Control-Allow-Headers': 'Content-Type'
-        }
-      })
+    await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${q}&page_size=10`)
         .then(res => console.log(res))
         // .then(json => data=json.message.body.track_list);
 

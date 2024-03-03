@@ -13,12 +13,12 @@
 
 <body>
   <div class="container">
-    <input type="search" id="searchQuery" placeholder="Type query" aria-label="Search" />
-
-
-    <button type="button" class="btn btn-primary" id="searchBtn" data-mdb-ripple-init>
-      <i class="fa fa-search"></i>
-    </button>
+    <form action="https://musicfromlyrics.netlify.app/.netlify/functions/api" method="post">
+      <input type="search" id="searchQuery" name="name" placeholder="Type query" aria-label="Search" />
+      <button type="submit" class="btn btn-primary" id="searchBtn" data-mdb-ripple-init>
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
   </div>
 
   <script src="./script.js"></script>

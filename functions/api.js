@@ -8,7 +8,7 @@ const APIKEY = process.env.APIKEY;
 
 
 const corsOptions = {
-    origin: ['http://192.168.1.3:5500'],
+    origin: ['http://192.168.1.3:5500', 'https://xentoro0.github.io'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     optionsSuccessStatus: 204,
   };

@@ -1,16 +1,14 @@
-const APIKEY = '';
-
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
 
 let tracks;
 let lyrics;
 searchButton.addEventListener("click", async (e) =>{
-   await  postData("http://localhost:8888/.netlify/functions/api/search", { name: searchQuery.value })
+    await postData("https://musicfromlyrics.netlify.app/.netlify/functions/api/search", { name: searchQuery.value })
     .then((data) => tracks = data.msg.track_list);
     document.getElementById("cards").innerHTML = '';
      tracks.forEach(async track => {
-        await postData("http://localhost:8888/.netlify/functions/api/getLyrics", { name: track.track.track_id })
+        await postData("https://musicfromlyrics.netlify.app/.netlify/functions/api/getLyrics", { name: track.track.track_id })
             .then((data) => lyrics = data.lyrics.split('\n'));
             console.log(track);
             lyrics.splice(-4);

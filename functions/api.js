@@ -8,7 +8,7 @@ const APIKEY = process.env.APIKEY;
 
 
 const corsOptions = {
-    origin: ['http://192.168.1.3:5500', 'https://xentoro0.github.io'],
+    origin: ['http://192.168.1.10:5500', 'https://xentoro0.github.io'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     optionsSuccessStatus: 204,
   };
@@ -25,11 +25,11 @@ router.post('/search', async (req, res) => {
     const stringValue = JSON.parse(bufferData.toString('utf-8')).name;
     
     const url = "https://api.musixmatch.com/ws/1.1/";
-        await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${stringValue}&page_size=10`)
+        await fetch(url + `track.search?apikey=${APIKEY}&q=${stringValue}&page_size=10`)
             .then(res => res.json())
             .then(json => msg=json.message.body);
             
-        res.json({ msg:msg, api:APIKEY, str:stringValue });
+    res.json({ msg:msg, api:APIKEY, str:stringValue });
 })
 
 router.post('/getLyrics', async (req, res) => {

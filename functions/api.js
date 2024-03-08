@@ -15,7 +15,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 router.get('/', async (req, res) => {
-res.send({message: 'ok'});
+    res.send({message: 'ok', cors : {corsOptions}});
 });
 
 router.post('/search', async (req, res) => {

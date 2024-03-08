@@ -1,43 +1,70 @@
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
 
-let tracks;
-let lyrics;
+var tracks = [];
 searchButton.addEventListener("click", async (e) =>{
-    await postData("https://musicfromlyrics.netlify.app/.netlify/functions/api/search", { name: searchQuery.value })
-    .then((data) => tracks = data.msg.track_list);
-    document.getElementById("cards").innerHTML = '';
-     tracks.forEach(async track => {
-        await postData("https://musicfromlyrics.netlify.app/.netlify/functions/api/getLyrics", { name: track.track.track_id })
-            .then((data) => lyrics = data.lyrics.split('\n'));
-            console.log(track);
-            lyrics.splice(-4);
-            lyrics = lyrics.join(' <br> ');
-        document.getElementById("cards").innerHTML += `<div class="col"><div class="card"><div class="card-body"><h4 class="card-title">${track.track.track_name}</h4><h4 class="badge badge-secondary">${track.track.artist_name}</h4><p class="card-text">${lyrics}</p><a href="${track.track.track_share_url}"  target="_blank" class="btn btn-primary">Go to Song</a></div></div></div>`
-    });
-    
-    
+  let tempTracks = await searchData(searchQuery.value);
+  tempTracks = tempTracks.msg.track_list;
+  tempTracks.forEach(async track => {
+    let lyrics = await fetchLyrics(track.track.track_id);
+    lyrics.split('\n');
+    lyrics.splice(-4);
+    lyrics = lyrics.join(' <br> ');
+    let t = new Track(track.track.track_id, track.track.track_name, track.track.artist_name, lyrics, track.track.track_share_url);
+    tracks.push(t);
+  });
+  displayTracks();
+  console.log(tracks);
 })
 
 
+async function fetchLyrics(id) {
+  const response = await fetch("https://musicfromlyrics.netlify.app/.netlify/functions/api/getLyrics", {
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache", 
+    credentials: "same-origin", 
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer", 
+    body: JSON.stringify('name: id'), 
+  });
+  return response.json(); 
+}  
+async function searchData(name) {
+  const response = await fetch("https://musicfromlyrics.netlify.app/.netlify/functions/api/search", {
+    method: "POST",
+    mode: "cors",
+    cache: "no-cache", 
+    credentials: "same-origin", 
+    headers: {
+      "Content-Type": "application/json",
+    },
+    redirect: "follow",
+    referrerPolicy: "no-referrer", 
+    body: JSON.stringify('name: name'), 
+  });
+  return response.json(); 
+}
 
- 
-
-
-  async function postData(url = "", data = {}) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data), // body data type must match "Content-Type" header
-    });
-    return response.json(); // parses JSON response into native JavaScript objects
-  }
+function displayTracks(){
+  document.getElementById("cards").replaceChildren();
+  tracks.forEach( track => {
+    let e = document.createElement("div")
+    e.className = "col";
+    e.innerHTML = 
+    `
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">${track.name}</h4>
+          <h4 class="badge badge-secondary">${track.artist_name}</h4>
+          <p class="card-text">${lyrics}</p>
+          <a href="${track.share_url}"  target="_blank" class="btn btn-primary">Go to Song</a>
+        </div>
+      </div>
+    `;
+    document.getElementById("cards").appendChild(e)
+  })
+}

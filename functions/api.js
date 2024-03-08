@@ -12,7 +12,7 @@ const corsOptions = {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     optionsSuccessStatus: 204,
   };
-app.use(cors(corsOptions));
+app.use(cors());
 
 router.get('/', async (req, res) => {
     res.send({message: 'ok', cors : {corsOptions}});

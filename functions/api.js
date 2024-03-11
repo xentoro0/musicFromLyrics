@@ -4,7 +4,9 @@ const app = express();
 const cors = require('cors');
 const router = express.Router();
 require('dotenv').config();
+const axios = require('axios');
 const mysql = require('mysql');
+const querystring = require('querystring');
 
 const con = mysql.createConnection({
   host: "sql11.freemysqlhosting.net",
@@ -50,6 +52,12 @@ router.post('/search', async (req, res) => {
     res.json({ msg:msg, api:APIKEY, str:stringValue });
 })
 
+router.post('/getTrackId', async (req, res) => {
+    const q = req.body.q;
+    const data = await fetchData(`https://api.spotify.com/v1/search?q=${q}&type=track%2Cartist`);
+    res.json({data})
+});
+
 router.post('/getLyrics', async (req, res) => {
     var lyrics;
     const bufferData = req.body;
@@ -62,39 +70,24 @@ router.post('/getLyrics', async (req, res) => {
         
         res.json({ lyrics });
 })
-// var data;
-// var tracks = [];
-
-//     const url = "https://api.musixmatch.com/ws/1.1/";
-//     await fetch(url + `track.search?apikey=${APIKEY}&q_lyrics=${name}&page_size=10`)
-//         .then(res => res.json())
-//         .then(json => data=json.message.body.track_list);
-
-//     for (let i = 0; i < data.length; i++) {
-//         tracks.push(
-//             {
-//                 "id": data[i].track.track_id,
-//                 "track": data[i].track,
-//                 "artist": data[i].track.artist_name,
-//                 "name": data[i].track.track_name,
-//                 "url" : data[i].track.track_share_url
-//             }
-//             );
-//         console.log(+i +1 +" - " + data[i].track.artist_name + " - " + data[i].track.track_name);
-        
-//     };
-
-//     readline.question(`type number of track\n`, async t => {
-//         var track = tracks[t-1];
-//         await fetch(url + `track.lyrics.get?apikey=${APIKEY}&track_id=${track.id}`)
-//             .then(res => res.json())
-//             .then(json => track.lyrics = json.message.body.lyrics.lyrics_body);
-        
-//         console.log(track);
-//     readline.close();
-//     });
-// });
-
+async function fetchData(url){
+    try {
+        const accessToken = process.env.SPOTIFY_TOKEN; 
+    
+        const response = await axios.get(url, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        const spotifyData = response.data;
+        return spotifyData;
+      } catch (error) {
+        console.error('Error making Spotify API request:', error.message);
+        return({ error: 'Internal Server Error' });
+      }
+}
 
 
 app.use('/.netlify/functions/api', router);

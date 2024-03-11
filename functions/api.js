@@ -4,18 +4,36 @@ const app = express();
 const cors = require('cors');
 const router = express.Router();
 require('dotenv').config();
+const mysql = require('mysql');
+
+const con = mysql.createConnection({
+  host: "sql11.freemysqlhosting.net",
+  user: "sql11689752",
+  password: "CrJuuZLnEV",
+  database: "sql11689752"
+});
+
 const APIKEY = process.env.APIKEY;
 
-
 const corsOptions = {
-    origin: '*',
+    origin: ['*'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     optionsSuccessStatus: 204,
   };
 app.use(cors());
 
 router.get('/', async (req, res) => {
-    res.send({message: 'ok', cors : {corsOptions}});
+    res.send({message: 'ok', cors : ['no',corsOptions]});
+});
+
+router.get('/db-connection', async (req, res) => {
+con.connect(function(err) {
+    if (err) throw err;
+    con.query("select * from favorites", function(err, result) {
+        if (err) throw err;
+    res.send({result});
+    });
+});
 });
 
 router.post('/search', async (req, res) => {
@@ -40,7 +58,7 @@ router.post('/getLyrics', async (req, res) => {
     const url = "https://api.musixmatch.com/ws/1.1/";
     await fetch(url + `track.lyrics.get?apikey=${APIKEY}&track_id=${stringValue}`)
         .then(res => res.json())
-        .then(json => lyrics = json.message.body.lyrics.lyrics_body);
+        .then(json => lyrics = json);
         
         res.json({ lyrics });
 })

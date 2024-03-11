@@ -1,6 +1,6 @@
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
-const url = "http://localhost:8888/.netlify/functions"
+const url = "https://musicfromlyrics.netlify.app/.netlify/functions"
 var tracks = new Array();
 
 searchButton.addEventListener("click", async (e) =>{
@@ -58,7 +58,6 @@ async function searchData(name) {
     referrerPolicy: "no-referrer", 
     body: JSON.stringify({name : name}), 
   });
-  console.log(await response.json());
   return await response.json(); 
 }
 

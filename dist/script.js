@@ -17,6 +17,7 @@ searchButton.addEventListener("click", async (e) =>{
   }
   tempTracks.forEach(async track => {
     let lyrics = await fetchLyrics(track.track.track_id);
+    console.log(lyrics);
     lyrics = lyrics.lyrics.message.body.lyrics.lyrics_body;
     lyrics = lyrics.split('\n');
     lyrics.splice(-4);

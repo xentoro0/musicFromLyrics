@@ -53,9 +53,10 @@ router.post('/search', async (req, res) => {
 })
 
 router.post('/getTrackId', async (req, res) => {
-    const q = req.body.q;
-    const data = await fetchData(`https://api.spotify.com/v1/search?q=${q}&type=track%2Cartist`);
-    res.json({data})
+    const bufferData = req.body;
+    const name = JSON.parse(bufferData.toString('utf-8'));
+    const data = await fetchData(`https://api.spotify.com/v1/search?q=${name.q}&type=track%2Cartist`);
+    res.json({data:data.tracks.items[0].id})
 });
 
 router.post('/getLyrics', async (req, res) => {

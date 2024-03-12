@@ -1,68 +1,44 @@
 const searchButton = document.getElementById("searchBtn");
 const searchQuery = document.getElementById("searchQuery");
 const url = "https://musicfromlyrics.netlify.app/.netlify/functions"
-var tracks = new Array();
+var tracks;
 
 searchButton.addEventListener("click", async (e) =>{
+  tracks = new Array();
   if(searchQuery.value.length  < 1){
     alert("search for something");
     return
   }
-  let tempTracks = await searchData(searchQuery.value);
-  tempTracks = tempTracks.msg.track_list;
-  
+  let tempTracks = await post(`${url}/api/search`,{name: searchQuery.value});
+  tempTracks = tempTracks.msg.track_list.map((e) => e.track);
+
   if(tempTracks.length  < 1){
     alert("no tracks found");
     return
   }
+
   tempTracks.forEach(async track => {
-    let lyrics = await fetchLyrics(track.track.track_id);
-    console.log(lyrics);
-    lyrics = lyrics.lyrics.message.body.lyrics.lyrics_body;
-    lyrics = lyrics.split('\n');
-    lyrics.splice(-4);
-    lyrics = lyrics.join(' <br> ');
-    let t = new Track(track.track.track_id, track.track.track_name, track.track.artist_name, lyrics, track.track.track_share_url);
-    tracks.push(t);
-    displayTracks();
+    if(track.has_lyrics){
+      let lyrics = await fetchLyrics(track.track_id);
+      let track_id = await post(`${url}/api/getTrackId`, {q: `${track.artist_name} ${track.track_name}`});
+      let t = new Track(track.track_id, track.track_name, track.artist_name, lyrics, track.track_share_url, track_id.id);
+      tracks.push(t);
+      displayTracks();
+    }
   });
 })
 
-
 async function fetchLyrics(id) {
-  const response = await fetch(`${url}/api/getLyrics`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-cache", 
-    credentials: "same-origin", 
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer", 
-    body: JSON.stringify({name: id}), 
-  });
-  return response.json();
-   
+  let lyrics;
+  const data = await post(`${url}/api/getLyrics`, {name: id});
+  lyrics = data.lyrics.message.body.lyrics.lyrics_body.split('\n');
+  lyrics.splice(-4);
+  lyrics = lyrics.join(' <br> ');
+  return lyrics;
 }  
-async function searchData(name) {
-  const response = await fetch(`${url}/api/search`, {
-    method: "POST",
-    mode: "cors",
-    cache: "no-cache", 
-    credentials: "same-origin", 
-    headers: {
-      "Content-Type": "application/json",
-    },
-    redirect: "follow",
-    referrerPolicy: "no-referrer", 
-    body: JSON.stringify({name : name}), 
-  });
-  return await response.json(); 
-}
 
 function displayTracks(){
-  document.getElementById("cards").replaceChildren();
+  document.getElementById("cards").replaceChildren('');
   tracks.forEach( track => {
     let e = document.createElement("div")
     e.className = "col";
@@ -74,9 +50,33 @@ function displayTracks(){
           <h4 class="badge badge-secondary">${track.artist_name}</h4>
           <p class="card-text">${track.lyrics}</p>
           <a href="${track.share_url}"  target="_blank" class="btn btn-primary">Go to Song</a>
+          <iframe style="border-radius:12px"
+            src="https://open.spotify.com/embed/track/${track.embed_id}?utm_source=generator&theme=0"
+            width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+        </iframe>
         </div>
       </div>
     `;
     document.getElementById("cards").appendChild(e)
   })
+}
+async function post(url, body){
+  const response = await fetch
+  (
+    url, 
+    {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache", 
+      credentials: "same-origin", 
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer", 
+      body: JSON.stringify(body), 
+    }
+  );
+  return await response.json(); 
 }
